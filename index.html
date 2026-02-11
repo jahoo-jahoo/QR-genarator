@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>QR Code with Image and Bottom Text</title>
+    <title>QR Code with Center Highlight Text</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body style="font-family: Arial; text-align: center; margin-top: 40px;">
@@ -10,9 +10,6 @@
 
 <textarea id="qrText" rows="6" cols="50"
 placeholder="Enter long text here"></textarea>
-<br><br>
-
-<input type="file" id="logoInput" accept="image/*">
 <br><br>
 
 <button onclick="generateQR()">Generate QR</button>
@@ -24,7 +21,6 @@ placeholder="Enter long text here"></textarea>
 <script>
 function generateQR() {
     var text = document.getElementById("qrText").value;
-    var logoFile = document.getElementById("logoInput").files[0];
 
     if (!text) {
         alert("Enter text first");
@@ -45,7 +41,7 @@ function generateQR() {
         var ctx = finalCanvas.getContext("2d");
 
         finalCanvas.width = 300;
-        finalCanvas.height = 380; // extra space for text
+        finalCanvas.height = 300;
 
         // White background
         ctx.fillStyle = "#ffffff";
@@ -54,34 +50,27 @@ function generateQR() {
         // Draw QR
         ctx.drawImage(qrCanvas, 0, 0);
 
-        // Draw logo if uploaded
-        if (logoFile) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var img = new Image();
-                img.onload = function() {
-                    var size = 80; // logo size
-                    var x = (300 - size) / 2;
-                    var y = (300 - size) / 2;
-                    ctx.drawImage(img, x, y, size, size);
+        // Draw gray highlight behind text
+        var text = "Create by Jahoo";
+        ctx.font = "bold 16px Arial";
+        var textWidth = ctx.measureText(text).width;
+        var rectPadding = 6;
 
-                    addBottomText(ctx);
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(logoFile);
-        } else {
-            addBottomText(ctx);
-        }
+        var rectX = (300 - textWidth) / 2 - rectPadding;
+        var rectY = 150 - 12; // center y minus half height
+        var rectWidth = textWidth + rectPadding * 2;
+        var rectHeight = 24;  // height of rectangle
+
+        ctx.fillStyle = "#b0b0b0"; // gray color
+        ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+
+        // Draw text over rectangle
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 150, 150);
 
     }, 300);
-}
-
-function addBottomText(ctx) {
-    ctx.fillStyle = "red";          // text color
-    ctx.font = "bold 20px Arial";   // bold text
-    ctx.textAlign = "center";
-    ctx.fillText("Create by Jahoo", 150, 360); // x=center, y=position
 }
 
 function downloadQR() {
@@ -93,7 +82,7 @@ function downloadQR() {
 
     var link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = "QR_with_Text.png";
+    link.download = "QR_Center_Text.png";
     link.click();
 }
 </script>
