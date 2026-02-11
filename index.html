@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>QR Code with Image</title>
+    <title>QR Code with Image and Bottom Text</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body style="font-family: Arial; text-align: center; margin-top: 40px;">
 
-<h2>QR Code with Center Image</h2>
+<h2>QR Code Generator</h2>
 
 <textarea id="qrText" rows="6" cols="50"
 placeholder="Enter long text here"></textarea>
@@ -45,7 +45,10 @@ function generateQR() {
         var ctx = finalCanvas.getContext("2d");
 
         finalCanvas.width = 300;
-        finalCanvas.height = 300;
+        finalCanvas.height = 350; // extra space for text
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
         ctx.drawImage(qrCanvas, 0, 0);
 
@@ -54,17 +57,28 @@ function generateQR() {
             reader.onload = function(e) {
                 var img = new Image();
                 img.onload = function() {
-                    var size = 80; // logo size
+                    var size = 80;
                     var x = (300 - size) / 2;
                     var y = (300 - size) / 2;
                     ctx.drawImage(img, x, y, size, size);
+
+                    addBottomText(ctx);
                 }
                 img.src = e.target.result;
             }
             reader.readAsDataURL(logoFile);
+        } else {
+            addBottomText(ctx);
         }
 
     }, 300);
+}
+
+function addBottomText(ctx) {
+    ctx.fillStyle = "#000000";
+    ctx.font = "18px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Create by Jahoo", 150, 330);
 }
 
 function downloadQR() {
@@ -76,7 +90,7 @@ function downloadQR() {
 
     var link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = "QR_with_Image.png";
+    link.download = "QR_with_Text.png";
     link.click();
 }
 </script>
