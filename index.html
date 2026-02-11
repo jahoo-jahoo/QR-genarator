@@ -45,19 +45,22 @@ function generateQR() {
         var ctx = finalCanvas.getContext("2d");
 
         finalCanvas.width = 300;
-        finalCanvas.height = 350; // extra space for text
+        finalCanvas.height = 380; // extra space for text
 
+        // White background
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
+        // Draw QR
         ctx.drawImage(qrCanvas, 0, 0);
 
+        // Draw logo if uploaded
         if (logoFile) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var img = new Image();
                 img.onload = function() {
-                    var size = 80;
+                    var size = 80; // logo size
                     var x = (300 - size) / 2;
                     var y = (300 - size) / 2;
                     ctx.drawImage(img, x, y, size, size);
@@ -75,10 +78,10 @@ function generateQR() {
 }
 
 function addBottomText(ctx) {
-    ctx.fillStyle = "#000000";
-    ctx.font = "18px Arial";
+    ctx.fillStyle = "red";          // text color
+    ctx.font = "bold 20px Arial";   // bold text
     ctx.textAlign = "center";
-    ctx.fillText("Create by Jahoo", 150, 330);
+    ctx.fillText("Create by Jahoo", 150, 360); // x=center, y=position
 }
 
 function downloadQR() {
