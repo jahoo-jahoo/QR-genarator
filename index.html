@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code with Image</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 40px;">
+
+<h2>QR Code with Center Image</h2>
+
+<textarea id="qrText" rows="6" cols="50"
+placeholder="Enter long text here"></textarea>
+<br><br>
+
+<input type="file" id="logoInput" accept="image/*">
+<br><br>
+
+<button onclick="generateQR()">Generate QR</button>
+<button onclick="downloadQR()">Download QR</button>
+
+<br><br>
+<canvas id="finalCanvas"></canvas>
+
+<script>
+function generateQR() {
+    var text = document.getElementById("qrText").value;
+    var logoFile = document.getElementById("logoInput").files[0];
+
+    if (!text) {
+        alert("Enter text first");
+        return;
+    }
+
+    var tempDiv = document.createElement("div");
+    new QRCode(tempDiv, {
+        text: text,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    setTimeout(function () {
+        var qrCanvas = tempDiv.querySelector("canvas");
+        var finalCanvas = document.getElementById("finalCanvas");
+        var ctx = finalCanvas.getContext("2d");
+
+        finalCanvas.width = 300;
+        finalCanvas.height = 300;
+
+        ctx.drawImage(qrCanvas, 0, 0);
+
+        if (logoFile) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var size = 80; // logo size
+                    var x = (300 - size) / 2;
+                    var y = (300 - size) / 2;
+                    ctx.drawImage(img, x, y, size, size);
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(logoFile);
+        }
+
+    }, 300);
+}
+
+function downloadQR() {
+    var canvas = document.getElementById("finalCanvas");
+    if (!canvas.width) {
+        alert("Generate QR first!");
+        return;
+    }
+
+    var link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "QR_with_Image.png";
+    link.click();
+}
+</script>
+
+</body>
+</html>
