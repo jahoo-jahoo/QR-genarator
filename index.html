@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code with Center Highlight Text</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 40px;">
+
+<h2>QR Code Generator</h2>
+
+<textarea id="qrText" rows="6" cols="50"
+placeholder="Enter long text here"></textarea>
+<br><br>
+
+<button onclick="generateQR()">Generate QR</button>
+<button onclick="downloadQR()">Download QR</button>
+
+<br><br>
+<canvas id="finalCanvas"></canvas>
+
+<script>
+function generateQR() {
+    var text = document.getElementById("qrText").value;
+
+    if (!text) {
+        alert("Enter text first");
+        return;
+    }
+
+    var tempDiv = document.createElement("div");
+    new QRCode(tempDiv, {
+        text: text,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    setTimeout(function () {
+        var qrCanvas = tempDiv.querySelector("canvas");
+        var finalCanvas = document.getElementById("finalCanvas");
+        var ctx = finalCanvas.getContext("2d");
+
+        finalCanvas.width = 300;
+        finalCanvas.height = 300;
+
+        // White background
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+        // Draw QR
+        ctx.drawImage(qrCanvas, 0, 0);
+
+        // Draw gray highlight behind text
+        var text = "Create by Jahoo";
+        ctx.font = "bold 16px Arial";
+        var textWidth = ctx.measureText(text).width;
+        var rectPadding = 6;
+
+        var rectX = (300 - textWidth) / 2 - rectPadding;
+        var rectY = 150 - 12; // center y minus half height
+        var rectWidth = textWidth + rectPadding * 2;
+        var rectHeight = 24;  // height of rectangle
+
+        ctx.fillStyle = "#b0b0b0"; // gray color
+        ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+
+        // Draw text over rectangle
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 150, 150);
+
+    }, 300);
+}
+
+function downloadQR() {
+    var canvas = document.getElementById("finalCanvas");
+    if (!canvas.width) {
+        alert("Generate QR first!");
+        return;
+    }
+
+    var link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "QR_Center_Text.png";
+    link.click();
+}
+</script>
+
+</body>
+</html>
